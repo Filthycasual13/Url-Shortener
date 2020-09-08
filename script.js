@@ -1,23 +1,26 @@
 const button = document.querySelector(".shorten-it");
+const copy = document.querySelector(".copy");
 let orignal = document.querySelector(".long-link");
 let short = document.querySelector(".short-link");
-let rel = "";
+
+
 
 button.addEventListener("click", getLink);
-window.addEventListener("load", checkStorage)
+copy.addEventListener("click", copyClipboard);
+window.addEventListener("load", checkStorage);
 
 function getLink() {
     let link = document.querySelector(".shorten").value;
     let input = document.querySelector(".shorten");
-    
-    
+    let rel;
 
 
-    if (link!== "") {
+
+    if (link !== "") {
         input.classList.remove("empty");
         document.querySelector(".empty-text").style.visibility = "hidden";
 
-        fetch('https://rel.ink/api/links/' , {
+        fetch('https://rel.ink/api/links/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -28,15 +31,15 @@ function getLink() {
         }).then(res => {
             return res.json()
         })
-        .then(data => short.innerHTML = "https://rel.ink/" + data.hashid)
-        .catch(err => console.log(err))
+            .then(data => localStorage.sLink = short.innerHTML = "https://rel.ink/" + data.hashid)
+            .catch(err => console.log(err))
 
-        rel = short.innerHTML; 
-        localStorage.setItem("sLink", rel)
-          
-
+        
+        
+       // short.innerHTML = "https://rel.ink/" + localStorage.sLink;
         localStorage.setItem("oLink", trimLink(link, 40))
         orignal.innerHTML = trimLink(link, 40);
+
         document.querySelector(".shorten").value = null;
         document.querySelector(".link-container").style.visibility = "visible";
 
@@ -46,20 +49,31 @@ function getLink() {
     }
 
     function trimLink(link, length) {
-        return link.length > length ? 
-               link.substring(0, length) + '...' :
-               link;
+        return link.length > length ?
+            link.substring(0, length) + '...' :
+            link;
     };
-    
+
 }
 
 function checkStorage() {
 
-    if( localStorage.length == 3) {
+    if (localStorage.length == 3) {
         short.innerHTML = localStorage.sLink;
         orignal.innerHTML = localStorage.oLink
         document.querySelector(".link-container").style.visibility = "visible";
     }
 }
 
+function copyClipboard() {
+    let c = localStorage.sLink;
+    console.log(c);
+
+    // var text = "Example text to appear on clipboard";
+    // navigator.clipboard.writeText(text).then(function () {
+    //     console.log('Async: Copying to clipboard was successful!');
+    // }, function (err) {
+    //     console.error('Async: Could not copy text: ', err);
+    // });
+}
 
